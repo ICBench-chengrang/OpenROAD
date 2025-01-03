@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1.7-labs
-
 # Target with dependencies to build all flow tools from their sources.
 # i.e., "./build_openroad.sh --local" from inside a docker container
 # NOTE: don't use this file directly unless you know what you are doing,
@@ -37,9 +35,8 @@ COPY --link flow/scripts flow/scripts
 COPY --link flow/designs flow/designs
 COPY --link tools/AutoTuner tools/AutoTuner
 
-COPY --link --from=orfs-builder-base /OpenROAD-flow-scripts/tools/install tools/install
-COPY --link \
-     --exclude=.git* --exclude=tools/ --exclude=docs/ --exclude=docker/ \
-     --exclude=flow/designs --exclude=flow/platforms --exclude=flow/scripts \
-     --exclude=flow/test --exclude=flow/tutorials --exclude=flow/util \
-  . ./
+# Manually exclude unnecessary directories and files
+RUN rm -rf .git* tools/ docs/ docker/ flow/designs flow/platforms \
+       flow/scripts flow/test flow/tutorials flow/util
+COPY . ./
+COPY --from=orfs-builder-base /OpenROAD-flow-scripts/tools/install tools/install
